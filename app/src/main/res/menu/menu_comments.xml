@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_add_comment"
+        android:title="@string/menu_item_title_add_comments"
+        app:showAsAction="ifRoom" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/comments_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical" />
+
+</menu>
