@@ -1,9 +1,11 @@
 package com.academy.sda.databasetest.model.comments.database;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.academy.sda.databasetest.model.comments.Comment;
 import com.academy.sda.databasetest.utils.DatabaseHelper;
@@ -11,21 +13,29 @@ import com.academy.sda.databasetest.utils.DatabaseHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by wd42 on 06.06.17.
- */
 
 public class CommentsDataSource {
 
     private DatabaseHelper databaseHelper;
     private SQLiteDatabase database;
 
-    public CommentsDataSource(DatabaseHelper databaseHelper) {
-        this.databaseHelper = databaseHelper;
+    public CommentsDataSource(Context context) {
+        this.databaseHelper = new DatabaseHelper(context);
     }
 
     public void open() throws SQLException {
         this.database = databaseHelper.getWritableDatabase();
+    }
+
+    public long updateComment(Comment comment) {
+        ContentValues contentValues = new ContentValues();
+
+
+        contentValues.put("comment", comment.getComment());
+        long recordId = this.database.update("comments", contentValues, "_id=" + comment.getId(), null);
+
+        return recordId;
+
     }
 
     public void close() {
@@ -35,9 +45,13 @@ public class CommentsDataSource {
     public Comment createComment(String comment) {
         ContentValues contentValues = new ContentValues();
 
+
         contentValues.put("comment", comment);
-        this.database.insert("comments", null, contentValues);
+
+
+//        this.database.insert("comments", null, contentValues);
         long recordId = this.database.insert("comments", null, contentValues);
+
 
         Cursor cursor = this.database.query("comments",
                 new String[]{"_id", "comment"},
@@ -52,7 +66,10 @@ public class CommentsDataSource {
         commentRecord.setId(cursor.getLong(0));
         commentRecord.setComment(cursor.getString(1));
 
+
         cursor.close();
+
+        logDebug("Database takes in: " + commentRecord);
 
         return commentRecord;
     }
@@ -65,6 +82,7 @@ public class CommentsDataSource {
                 null,
                 null,
                 null,
+                null,
                 null);
 
         cursor.moveToFirst();
@@ -73,15 +91,20 @@ public class CommentsDataSource {
             Comment commentRecord = new Comment();
             commentRecord.setId(cursor.getLong(0));
             commentRecord.setComment(cursor.getString(1));
-
             comments.add(commentRecord);
-
             cursor.moveToNext();
-
-            cursor.close();
 
 
         }
+        cursor.close();
+
+        logDebug("Database returns: " + comments);
+
         return comments;
+    }
+
+    private void logDebug(String string) {
+        Log.e(getClass().getSimpleName(), string);
+
     }
 }

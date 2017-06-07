@@ -1,20 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="100">
 
-    <EditText
-        android:id="@+id/edit_text_new_comment"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/hint_comment_add"
-        android:inputType="text" />
-    <Button
-        android:id="@+id/button_add_comment"
-        android:layout_below="@id/edit_text_new_comment"
-        android:text="@string/button_add_comment_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
+        android:layout_height="0dp"
+        android:layout_weight="50">
 
-</RelativeLayout>
+        <EditText
+            android:id="@+id/edit_text_new_comment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="@string/hint_comment_add"
+            android:inputType="textMultiLine"
+            android:gravity="top|left" />
+        <!-- <Button
+             android:id="@+id/button_add_comment"
+             android:layout_below="@id/edit_text_new_comment"
+             android:text="@string/button_add_comment_text"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             />-->
+
+    </RelativeLayout>
+</LinearLayout>

@@ -1,6 +1,7 @@
 package com.academy.sda.databasetest.ui;
 
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,7 +15,6 @@ import android.widget.Toast;
 import com.academy.sda.databasetest.model.comments.Comment;
 import com.academy.sda.databasetest.model.comments.CommentsAdapter;
 import com.academy.sda.databasetest.model.comments.database.CommentsDataSource;
-import com.academy.sda.databasetest.utils.DatabaseHelper;
 import com.academy.sda.databasetest.R;
 
 import butterknife.BindView;
@@ -27,6 +27,8 @@ public class CommentsActivity extends AppCompatActivity implements CommentsAdapt
     @BindView(R.id.activity_main_swipe_refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
 
+    private int ADD_COMMENT = 87;
+    private int EDIT_COMMENT = 88;
     private CommentsAdapter commentsAdapter;
     private CommentsDataSource commentsDataSource;
 
@@ -52,8 +54,8 @@ public class CommentsActivity extends AppCompatActivity implements CommentsAdapt
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(commentsAdapter);
 
-        commentsDataSource = new CommentsDataSource(new DatabaseHelper(this, "myDatabase.db", null, 1));
-
+        commentsDataSource = new CommentsDataSource(this);
+        commentsDataSource.open();
 
         getComments();
 
@@ -62,10 +64,8 @@ public class CommentsActivity extends AppCompatActivity implements CommentsAdapt
     private void getComments() {
         showSpinner();
         logAndToast("Getting all comments");
-        commentsDataSource.open();
 
-        commentsDataSource.getAllComments();
-        commentsDataSource.close();
+        commentsAdapter.setData(commentsDataSource.getAllComments());
 
         hideSpinner();
     }
@@ -78,21 +78,30 @@ public class CommentsActivity extends AppCompatActivity implements CommentsAdapt
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_add_comment) {
-            makeShortToast("Adding comment");
-            startCommentAddActivity();
+        if (item.getItemId() == R.id.menu_comments_item) {
+            startCommentAddActivity(null);
         }
         return true;
     }
 
-    private void startCommentAddActivity() {
-        Intent intent = new Intent(getApplicationContext(), CommentAddActivity.class);
-        startActivity(intent);
+    private void startCommentAddActivity(@Nullable Comment comment) {
+        Intent intent = new Intent(this, CommentDetailsActivity.class);
+        if (comment == null) {
+            logAndToast("Adding new comment");
+            startActivityForResult(intent, ADD_COMMENT);
+        } else {
+            logAndToast("Editing comment");
+            intent.putExtra(getString(R.string.comment_to_edit_key), comment);
+            startActivityForResult(intent, EDIT_COMMENT);
+        }
     }
 
     @Override
     public void onCommentClick(Comment comment) {
+
         logDebug(comment + " was clicked");
+
+        startCommentAddActivity(comment);
     }
 
     private void showSpinner() {
@@ -115,5 +124,33 @@ public class CommentsActivity extends AppCompatActivity implements CommentsAdapt
     private void logAndToast(String message) {
         logDebug(message);
         makeShortToast(message);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        commentsDataSource.close();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // Check which request we're responding to
+        if (requestCode == ADD_COMMENT) {
+            logDebug("ADD_COMMENT request was returned to " + getClass().getSimpleName());
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                // The user picked a contact.
+                // The Intent's data Uri identifies which contact was selected.
+
+                logDebug("ADD_COMMENT request successful");
+                makeShortToast("Comment added");
+                getComments();
+                // Do something with the contact here (bigger example below)
+            }
+        }else if(requestCode==EDIT_COMMENT){
+            logDebug("EDIT_COMMENT");
+        }
     }
 }
