@@ -12,25 +12,26 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.academy.sda.databasetest.model.comments.Comment;
-import com.academy.sda.databasetest.model.comments.CommentsAdapter;
-import com.academy.sda.databasetest.model.comments.database.CommentsDataSource;
+import com.academy.sda.databasetest.model.comments.Task;
+import com.academy.sda.databasetest.model.comments.TaskAdapter;
+import com.academy.sda.databasetest.model.comments.database.TasksDataSource;
 import com.academy.sda.databasetest.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class CommentsActivity extends AppCompatActivity implements CommentsAdapter.CommentClickListener {
+public class TasksActivity extends AppCompatActivity implements TaskAdapter.TaskClickListener {
 
     @BindView(R.id.comments_recycler)
     RecyclerView recyclerView;
     @BindView(R.id.activity_main_swipe_refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
 
-    private final int ADD_COMMENT = 87;
-    private final int EDIT_COMMENT = 88;
-    private CommentsAdapter commentsAdapter;
-    private CommentsDataSource commentsDataSource;
+    private final int ADD_TASK = 87;
+    private final int EDIT_TASK = 88;
+
+    private TaskAdapter taskAdapter;
+    private TasksDataSource tasksDataSource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +43,7 @@ public class CommentsActivity extends AppCompatActivity implements CommentsAdapt
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getComments();
+                getTasks();
             }
         });
 
@@ -50,22 +51,22 @@ public class CommentsActivity extends AppCompatActivity implements CommentsAdapt
 
     private void init() {
 
-        commentsAdapter = new CommentsAdapter(this);
+        taskAdapter = new TaskAdapter(this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        recyclerView.setAdapter(commentsAdapter);
+        recyclerView.setAdapter(taskAdapter);
 
-        commentsDataSource = new CommentsDataSource(this);
-        commentsDataSource.open();
+        tasksDataSource = new TasksDataSource(this);
+        tasksDataSource.open();
 
-        getComments();
+        //getTasks();
 
     }
 
-    private void getComments() {
+    private void getTasks() {
         showSpinner();
-        logAndToast("Getting all comments");
+        logAndToast("Getting all tasks");
 
-        commentsAdapter.setData(commentsDataSource.getAllComments());
+        taskAdapter.setData(tasksDataSource.getAll());
 
         hideSpinner();
     }
@@ -84,24 +85,24 @@ public class CommentsActivity extends AppCompatActivity implements CommentsAdapt
         return true;
     }
 
-    private void startCommentAddActivity(@Nullable Comment comment) {
-        Intent intent = new Intent(this, CommentDetailsActivity.class);
-        if (comment == null) {
-            logAndToast("Adding new comment");
-            startActivityForResult(intent, ADD_COMMENT);
+    private void startCommentAddActivity(@Nullable Task task) {
+        Intent intent = new Intent(this, TaskDetailsActivity.class);
+        if (task == null) {
+            logAndToast("Adding new task");
+            startActivityForResult(intent, ADD_TASK);
         } else {
-            logAndToast("Editing comment");
-            intent.putExtra(getString(R.string.comment_to_edit_key), comment);
-            startActivityForResult(intent, EDIT_COMMENT);
+            logAndToast("Editing task");
+            intent.putExtra(getString(R.string.task_to_edit_key), task);
+            startActivityForResult(intent, EDIT_TASK);
         }
     }
 
     @Override
-    public void onCommentClick(Comment comment) {
+    public void onTaskClick(Task task) {
 
-        logDebug(comment + " was clicked");
+        logDebug(task + " was clicked");
 
-        startCommentAddActivity(comment);
+        startCommentAddActivity(task);
     }
 
     private void showSpinner() {
@@ -130,7 +131,7 @@ public class CommentsActivity extends AppCompatActivity implements CommentsAdapt
     protected void onDestroy() {
         super.onDestroy();
 
-        commentsDataSource.close();
+        tasksDataSource.close();
     }
 
     @Override
@@ -138,23 +139,23 @@ public class CommentsActivity extends AppCompatActivity implements CommentsAdapt
         super.onActivityResult(requestCode, resultCode, data);
         // Check which request we're responding to
         switch (requestCode) {
-            case ADD_COMMENT:
-                logDebug("ADD_COMMENT request was returned to " + getClass().getSimpleName());
+            case ADD_TASK:
+                logDebug("ADD_TASK request was returned to " + getClass().getSimpleName());
                 // Make sure the request was successful
                 if (resultCode == RESULT_OK) {
                     // The user picked a contact.
                     // The Intent's data Uri identifies which contact was selected.
 
-                    logDebug("ADD_COMMENT request successful");
-                    makeShortToast("Comment added");
-                    getComments();
+                    logDebug("ADD_TASK request successful");
+                    makeShortToast("Task added");
+                    getTasks();
                     // Do something with the contact here (bigger example below)
                 }
-            case EDIT_COMMENT:
-                logDebug("EDIT_COMMENT request was returned to " + getClass().getSimpleName() + " with " + resultCode);
-                logDebug("EDIT_COMMENT request successful");
-                makeShortToast("Comment edited");
-                getComments();
+            case EDIT_TASK:
+                logDebug("EDIT_TASK request was returned to " + getClass().getSimpleName() + " with " + resultCode);
+                logDebug("EDIT_TASK request successful");
+                makeShortToast("Task edited");
+                getTasks();
         }
 
     }

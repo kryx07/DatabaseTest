@@ -12,37 +12,37 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.academy.sda.databasetest.R;
-import com.academy.sda.databasetest.model.comments.Comment;
-import com.academy.sda.databasetest.model.comments.database.CommentsDataSource;
+import com.academy.sda.databasetest.model.comments.Task;
+import com.academy.sda.databasetest.model.comments.database.TasksDataSource;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class CommentDetailsActivity extends AppCompatActivity {
+public class TaskDetailsActivity extends AppCompatActivity {
 
     @BindView(R.id.edit_text_new_comment)
     EditText commentText;
 
-    private CommentsDataSource commentsDataSource;
-    private Comment comment;
+    private TasksDataSource tasksDataSource;
+    private Task task;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        logDebug("CommentDetailsActivity has started");
+        logDebug("TaskDetailsActivity has started");
         setContentView(R.layout.activity_comment_add);
         ButterKnife.bind(this);
         init();
     }
 
     private void init() {
-        commentsDataSource = new CommentsDataSource(this);
-        commentsDataSource.open();
+        tasksDataSource = new TasksDataSource(this);
+        tasksDataSource.open();
 
-        logDebug("Initializing comment");
-        comment = getIntent().getParcelableExtra(getString(R.string.comment_to_edit_key));
-        if (comment != null) {
-            commentText.setText(comment.getComment());
+        logDebug("Initializing task");
+        task = getIntent().getParcelableExtra(getString(R.string.task_to_edit_key));
+        if (task != null) {
+            commentText.setText(task.getDescription());
         }
 
     }
@@ -50,10 +50,10 @@ public class CommentDetailsActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         logDebug("Creating menu options");
-//        logDebug(comment.toString());
-        if (comment == null) {
+//        logDebug(task.toString());
+        if (task == null) {
             getMenuInflater().inflate(R.menu.menu_add_comments, menu);
-            logDebug("I think comment is null");
+            logDebug("I think task is null");
         } else {
             getMenuInflater().inflate(R.menu.menu_edit_comments, menu);
         }
@@ -73,24 +73,24 @@ public class CommentDetailsActivity extends AppCompatActivity {
     }
 
     private void deleteComment() {
-        logDebug("Deleting comment");
-        commentsDataSource.delete(comment);
+        logDebug("Deleting task");
+        tasksDataSource.delete(task);
         finishActivityWithOKResult();
     }
 
     private void updateComment() {
 
-        logDebug("Editing comment");
-        Comment updatedComment = comment;
-        updatedComment.setComment(commentText.getText().toString());
-        commentsDataSource.updateComment(updatedComment);
+        logDebug("Editing task");
+        Task updatedTask = task;
+        updatedTask.setDescription(commentText.getText().toString());
+        tasksDataSource.update(updatedTask);
 
         finishActivityWithOKResult();
 
     }
 
     public void addNewComment() {
-        commentsDataSource.createComment(commentText.getText().toString());
+        //tasksDataSource.create(commentText.getText().toString());
 
         finishActivityWithOKResult();
     }
@@ -110,9 +110,9 @@ public class CommentDetailsActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        commentsDataSource.close();
+        tasksDataSource.close();
 
-        logDebug("CommentDetailsActivity has stopped");
+        logDebug("TaskDetailsActivity has stopped");
 
     }
 

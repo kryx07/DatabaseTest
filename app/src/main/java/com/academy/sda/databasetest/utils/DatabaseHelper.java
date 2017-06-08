@@ -3,15 +3,26 @@ package com.academy.sda.databasetest.utils;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     public DatabaseHelper(Context context) {
         super(context, "mydatabase.db", null, 1);
     }
 
+    private final String TASKS_TABLE_NAME = "tasks";
+    private final String ID_COLUMN = "_id";
+    private final String DESCRIPTION_COLUMN = "description";
+    private final String CATEGORY_COLUMN = "category";
+    private final String DATE_COLUMN = "date";
+
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE comments (_id INTEGER PRIMARY KEY AUTOINCREMENT, comment TEXT NOT NULL);");
+
+        db.execSQL("CREATE TABLE " + TASKS_TABLE_NAME + " (" + ID_COLUMN
+                + " INTEGER PRIMARY KEY AUTOINCREMENT, " + DESCRIPTION_COLUMN +
+                " TEXT NOT NULL, " + CATEGORY_COLUMN + " TEXT NOT NULL, " +
+                DATE_COLUMN + " TEXT NOT NULL);");
     }
 
     @Override
@@ -24,5 +35,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         for (int i = oldVersion+1; i<=newVersion; ++i){
             db.execSQL(migrations[i]);
         }*/
+    }
+
+    private void logDebug(String string) {
+        Log.e(getClass().getSimpleName(), string);
+
     }
 }

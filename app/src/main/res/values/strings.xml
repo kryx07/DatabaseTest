@@ -1,13 +1,13 @@
 <resources>
-    <string name="app_name">Database Test</string>
+    <string name="app_name">ToDo Lister</string>
 
-    <string name="menu_item_title_add_comments">Add Comments</string>
+    <string name="menu_item_title_add_comments">Add</string>
     <string name="button_add_comment_text">Add</string>
-    <string name="hint_comment_add">Add your comment here</string>
+    <string name="hint_comment_add">Add your description here</string>
     <string name="menu_item_title_add_comment">Add</string>
 
     <string name="menu_item_title_update_comment">Update</string>
     <string name="menu_item_title_remove_comment">Remove</string>
 
-    <string name="comment_to_edit_key">comment_to_edit</string>
+    <string name="task_to_edit_key">comment_to_edit</string>
 </resources>
