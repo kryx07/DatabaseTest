@@ -27,8 +27,8 @@ public class CommentsActivity extends AppCompatActivity implements CommentsAdapt
     @BindView(R.id.activity_main_swipe_refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
 
-    private int ADD_COMMENT = 87;
-    private int EDIT_COMMENT = 88;
+    private final int ADD_COMMENT = 87;
+    private final int EDIT_COMMENT = 88;
     private CommentsAdapter commentsAdapter;
     private CommentsDataSource commentsDataSource;
 
@@ -137,20 +137,25 @@ public class CommentsActivity extends AppCompatActivity implements CommentsAdapt
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         // Check which request we're responding to
-        if (requestCode == ADD_COMMENT) {
-            logDebug("ADD_COMMENT request was returned to " + getClass().getSimpleName());
-            // Make sure the request was successful
-            if (resultCode == RESULT_OK) {
-                // The user picked a contact.
-                // The Intent's data Uri identifies which contact was selected.
+        switch (requestCode) {
+            case ADD_COMMENT:
+                logDebug("ADD_COMMENT request was returned to " + getClass().getSimpleName());
+                // Make sure the request was successful
+                if (resultCode == RESULT_OK) {
+                    // The user picked a contact.
+                    // The Intent's data Uri identifies which contact was selected.
 
-                logDebug("ADD_COMMENT request successful");
-                makeShortToast("Comment added");
+                    logDebug("ADD_COMMENT request successful");
+                    makeShortToast("Comment added");
+                    getComments();
+                    // Do something with the contact here (bigger example below)
+                }
+            case EDIT_COMMENT:
+                logDebug("EDIT_COMMENT request was returned to " + getClass().getSimpleName() + " with " + resultCode);
+                logDebug("EDIT_COMMENT request successful");
+                makeShortToast("Comment edited");
                 getComments();
-                // Do something with the contact here (bigger example below)
-            }
-        }else if(requestCode==EDIT_COMMENT){
-            logDebug("EDIT_COMMENT");
         }
+
     }
 }

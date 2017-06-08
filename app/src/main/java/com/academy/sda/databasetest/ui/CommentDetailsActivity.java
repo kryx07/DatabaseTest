@@ -66,8 +66,16 @@ public class CommentDetailsActivity extends AppCompatActivity {
             addNewComment();
         } else if (item.getItemId() == R.id.menu_edit_comments_update_item) {
             updateComment();
+        } else if (item.getItemId() == R.id.menu_edit_comments_delete_item) {
+            deleteComment();
         }
         return true;
+    }
+
+    private void deleteComment() {
+        logDebug("Deleting comment");
+        commentsDataSource.delete(comment);
+        finishActivityWithOKResult();
     }
 
     private void updateComment() {

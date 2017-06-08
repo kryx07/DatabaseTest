@@ -3,10 +3,6 @@ package com.academy.sda.databasetest.model.comments;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-/**
- * Created by wd42 on 06.06.17.
- */
-
 public class Comment implements Parcelable {
 
     private long id;
@@ -51,7 +47,7 @@ public class Comment implements Parcelable {
     public Comment() {
     }
 
-    protected Comment(Parcel in) {
+    private Comment(Parcel in) {
         this.id = in.readLong();
         this.comment = in.readString();
     }

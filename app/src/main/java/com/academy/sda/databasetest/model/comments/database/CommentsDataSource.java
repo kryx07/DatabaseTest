@@ -19,6 +19,11 @@ public class CommentsDataSource {
     private DatabaseHelper databaseHelper;
     private SQLiteDatabase database;
 
+    private final String COMMENT_TABLE_NAME = "comments";
+    private final String COMMENT_COLUMN = "comment";
+    private final String ID_COLUMN = "_id";
+
+
     public CommentsDataSource(Context context) {
         this.databaseHelper = new DatabaseHelper(context);
     }
@@ -31,15 +36,15 @@ public class CommentsDataSource {
         ContentValues contentValues = new ContentValues();
 
 
-        contentValues.put("comment", comment.getComment());
-        long recordId = this.database.update("comments", contentValues, "_id=" + comment.getId(), null);
+        contentValues.put(COMMENT_COLUMN, comment.getComment());
+        long recordId = this.database.update(COMMENT_TABLE_NAME, contentValues, ID_COLUMN + "=" + comment.getId(), null);
 
         return recordId;
 
     }
 
-    public void delete(Comment comment){
-        database.delete("comment","_id="+comment.getId(),null);
+    public void delete(Comment comment) {
+        database.delete(COMMENT_TABLE_NAME, ID_COLUMN + "=" + comment.getId(), null);
 
     }
 
@@ -51,16 +56,16 @@ public class CommentsDataSource {
         ContentValues contentValues = new ContentValues();
 
 
-        contentValues.put("comment", comment);
+        contentValues.put(COMMENT_COLUMN, comment);
 
 
 //        this.database.insert("comments", null, contentValues);
-        long recordId = this.database.insert("comments", null, contentValues);
+        long recordId = this.database.insert(COMMENT_TABLE_NAME, null, contentValues);
 
 
-        Cursor cursor = this.database.query("comments",
-                new String[]{"_id", "comment"},
-                "_id = " + recordId,
+        Cursor cursor = this.database.query(COMMENT_TABLE_NAME,
+                new String[]{ID_COLUMN, COMMENT_COLUMN},
+                ID_COLUMN + "= " + recordId,
                 null,
                 null,
                 null,
@@ -81,8 +86,8 @@ public class CommentsDataSource {
 
     public List<Comment> getAllComments() {
         Cursor cursor = database.query(
-                "comments",
-                new String[]{"_id", "comment"},
+                COMMENT_TABLE_NAME,
+                new String[]{ID_COLUMN, COMMENT_COLUMN},
                 null,
                 null,
                 null,
@@ -98,8 +103,6 @@ public class CommentsDataSource {
             commentRecord.setComment(cursor.getString(1));
             comments.add(commentRecord);
             cursor.moveToNext();
-
-
         }
         cursor.close();
 
