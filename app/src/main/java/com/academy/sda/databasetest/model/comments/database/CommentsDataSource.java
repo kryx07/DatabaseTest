@@ -38,6 +38,11 @@ public class CommentsDataSource {
 
     }
 
+    public void delete(Comment comment){
+        database.delete("comment","_id="+comment.getId(),null);
+
+    }
+
     public void close() {
         this.databaseHelper.close();
     }
